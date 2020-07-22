@@ -1,12 +1,4 @@
-/* function myFunction(){
-    let checkBox = document.getElementById("DisableCSP");
-    if (checkBox.checked == true){
-        chrome.runtime.sendMessage({CSPstate:"check"});
-      } else {
-         console.log("NO");
-      }
-}
- */
+
 
 /* 
 chrome.tabs.query({active:true,currentWindows:true},function(tabs){
@@ -21,13 +13,16 @@ chrome.tabs.query({active:true,currentWindows:true},function(tabs){
 */
 
 function myFunction(){
+    console.log('fired');
   let checkBox = document.getElementById("DisableCSP");
     if (checkBox.checked == true){
         chrome.runtime.sendMessage({CSPstate:"check"});
-        checkBox=true;
       } else {
          console.log("NO");
       }
 }
 
-myFunction();
+window.onload = function () {
+  document.querySelector('checkbox').addEventListener('change', myFunction);
+};
+
