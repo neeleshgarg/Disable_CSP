@@ -44,7 +44,7 @@ var init = function ()
   onHeadersReceived, onHeaderFilter, ['blocking', 'responseHeaders']
   );
 
-  chrome.tabs.query({active:true,currentWindows:true},function(tabs){
+  chrome.tabs.query({active:true},function(tabs){
     toggleDisableCSP(tabs[0].id);
     })
 };
