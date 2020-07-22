@@ -18,7 +18,7 @@ var toggleDisableCSP = function (tabId)
     disabledTabIds.push(tabId);                          
     chrome.browsingData.remove({}, { serviceWorkers: true }, function () {});
   }
-  updateUI(tabId);
+  
 };
 var onHeadersReceived = function (details) 
 {
@@ -37,15 +37,7 @@ var onHeadersReceived = function (details)
     responseHeaders: details.responseHeaders
   };
 };
-var updateUI = function (tabId) 
-{
-  var isDisabled = isCSPDisabled(tabId);
-  var iconName = isDisabled ? 'on' : 'off';
-  var title = isDisabled ? 'disabled' : 'enabled';
 
-  chrome.browserAction.setIcon({ path: 'icon38-' + iconName + '.png' });
-  chrome.browserAction.setTitle({ title: 'Content-Security-Policy headers are ' + title + ' for this tab' });
-};
 var init = function () 
 {
   var onHeaderFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] }; // When Chrome recieves some headers
@@ -64,4 +56,3 @@ chrome.runtime.onMessage.addListener(function(req,send,sendRes){
     init();
   }
 })
-/* init(); */
