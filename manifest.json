@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "Disable Content Security Policy",
+    "version": "1.0",
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "browsingData",
+        "http://*/*",
+        "https://*/*",
+        "tabs"
+    ],
+    "background": {
+        "scripts": [
+            "Content.js"
+        ],
+        "persistent": true
+    }
+}
