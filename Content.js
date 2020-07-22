@@ -45,6 +45,7 @@ var init = function ()
   );
 
   chrome.tabs.query({active:true},function(tabs){
+    console.log('in call of toggleCSP');
     toggleDisableCSP(tabs[0].id);
     })
 };
