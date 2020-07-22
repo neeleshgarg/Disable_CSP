@@ -18,7 +18,6 @@ var toggleDisableCSP = function (tabId)
     disabledTabIds.push(tabId);                          
     chrome.browsingData.remove({}, { serviceWorkers: true }, function () {});
   }
-  
 };
 var onHeadersReceived = function (details) 
 {
@@ -37,21 +36,21 @@ var onHeadersReceived = function (details)
     responseHeaders: details.responseHeaders
   };
 };
-
 var init = function () 
-{
+{ console.log('in init');
   var onHeaderFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] }; // When Chrome recieves some headers
   chrome.webRequest.onHeadersReceived.addListener
   (
   onHeadersReceived, onHeaderFilter, ['blocking', 'responseHeaders']
   );
 
-    chrome.tabs.query({active:true,currentWindows:true},function(tabs){
-      toggleDisableCSP(tabs[0].id);
+  chrome.tabs.query({active:true,currentWindows:true},function(tabs){
+    toggleDisableCSP(tabs[0].id);
     })
 };
   
 chrome.runtime.onMessage.addListener(function(req,send,sendRes){
+  console.log('message sent');
   if(req.CSPstate=="check"){
     init();
   }
