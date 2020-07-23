@@ -31,8 +31,7 @@ var onHeadersReceived = function (details) {
 var updateUI = function (tabId) 
 {
   var isDisabled = isCSPDisabled(tabId);
-  var title = isDisabled ? 'disabled' : 'enabled';
-  if(title=== 'disabled' ){
+  if(isDisabled ){
     console.log('message recieved');
     chrome.runtime.sendMessage({state:'checked'});
   }
