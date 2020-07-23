@@ -1,58 +1,64 @@
 var disabledTabIds = [];                                 // List of tabIds where CSP headers are disabled
-var isCSPDisabled = function (tabId) 
-{
+var isCSPDisabled = function (tabId) {
   return disabledTabIds.includes(tabId);
 };
-var toggleDisableCSP = function (tabId)
-{
-  if (isCSPDisabled(tabId)) 
-  {
-   disabledTabIds = disabledTabIds.filter(function (val)  // remove this tabId from disabledTabIds
-   {
-    return val !== tabId;
-   });
-  } 
-  else                                                  
-
-  {
-    disabledTabIds.push(tabId);                          
-    chrome.browsingData.remove({}, { serviceWorkers: true }, function () {});
-  }
-};
-var onHeadersReceived = function (details) 
-{
-  if (!isCSPDisabled(details.tabId)) 
+var toggleDisableCSP = function (tabId) {
+  if (isCSPDisabled(tabId)) {
+    disabledTabIds = disabledTabIds.filter(function (val)  // remove this tabId from disabledTabIds
     {
-      return;
+      return val !== tabId;
+    });
   }
-  for (var i = 0; i < details.responseHeaders.length; i++) 
-  {
-   if (details.responseHeaders[i].name.toLowerCase() === 'content-security-policy') 
-   {
+  else {
+    disabledTabIds.push(tabId);
+    chrome.browsingData.remove({}, { serviceWorkers: true }, function () { });
+  }
+  updateUI(tabId);
+};
+var onHeadersReceived = function (details) {
+  if (!isCSPDisabled(details.tabId)) {
+    return;
+  }
+  for (var i = 0; i < details.responseHeaders.length; i++) {
+    if (details.responseHeaders[i].name.toLowerCase() === 'content-security-policy') {
       details.responseHeaders[i].value = '';
-   }
+    }
   }
   return {
     responseHeaders: details.responseHeaders
   };
 };
-var init = function () 
-{ console.log('in init');
+var updateUI = function (tabId) 
+{
+  var isDisabled = isCSPDisabled(tabId);
+  var title = isDisabled ? 'disabled' : 'enabled';
+  if(title=== 'disabled' ){
+    console.log('message recieved');
+    chrome.runtime.sendMessage({state:'checked'});
+  }
+};
+var init = function () {
+  console.log('in init');
   var onHeaderFilter = { urls: ['*://*/*'], types: ['main_frame', 'sub_frame'] }; // When Chrome recieves some headers
   chrome.webRequest.onHeadersReceived.addListener
-  (
-  onHeadersReceived, onHeaderFilter, ['blocking', 'responseHeaders']
-  );
+    (
+      onHeadersReceived, onHeaderFilter, ['blocking', 'responseHeaders']
+    );
 
-  chrome.tabs.query({active:true},function(tabs){
+  chrome.tabs.query({ active: true }, function (tabs) {
     console.log('in call of toggleCSP');
     toggleDisableCSP(tabs[0].id);
-    })
+    updateUI(tabs[0].id);
+    /* chrome.tabs.onActivated.addListener(function (activeInfo)    // When the user changes tab
+  {   
+    updateUI(activeInfo.tabId);
+  }); */
+  })
 };
-  
-chrome.runtime.onMessage.addListener(function(req,send,sendRes){
+
+chrome.runtime.onMessage.addListener(function (req, send, sendRes) {
   console.log('message sent');
-  if(req.CSPstate=="check"){
+  if (req.CSPstate == "check") {
     init();
   }
 })
