@@ -32,8 +32,12 @@ var updateUI = function (tabId)
 {
   var isDisabled = isCSPDisabled(tabId);
   if(isDisabled ){
-    console.log('message recieved');
-    chrome.runtime.sendMessage({state:'checked'});
+    
+    chrome.runtime.onMessage.addListener(function(req,sender,sendRes){        
+        sendRes({
+          response: "true"
+      });
+    })
   }
 };
 var init = function () {
